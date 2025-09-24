@@ -17,8 +17,13 @@ pub mod shim;
 pub mod tpmevents;
 pub mod uefi;
 
-pub fn compute_pcr4(kernels_dir: &str, esp_path: &str, uki: bool, secureboot: bool) -> Pcr {
-    let events = tpmevents::compute::pcr4_events(kernels_dir, esp_path, uki, secureboot);
+pub fn compute_pcr4_nouki(kernels_dir: &str, esp_path: &str, uki: bool, secureboot: bool) -> Pcr {
+    let events = tpmevents::compute::pcr4_nouki_events(kernels_dir, esp_path, uki, secureboot);
+    Pcr::compile_from(&events)
+}
+
+pub fn compute_pcr4(esp_path: &str, uki: &str, uki_addons: &Vec<String>, secureboot: bool) -> Pcr {
+    let events = tpmevents::compute::pcr4_uki_events(esp_path, uki, uki_addons, secureboot);
     Pcr::compile_from(&events)
 }
 
