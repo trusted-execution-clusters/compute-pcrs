@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 const MOK_EVENTS_PCR14: [&str; 3] = ["MokList", "MokListX", "MokListTrusted"];
 
 fn mok_event_to_file_name(event_name: &str) -> String {
-    format!("{}RT", event_name)
+    format!("{event_name}RT")
 }
 
 fn mok_event_hash(events_dir_path: &Path, event_name: &str) -> Vec<u8> {

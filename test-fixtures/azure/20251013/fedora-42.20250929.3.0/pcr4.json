@@ -1,26 +1,36 @@
 {
   "id": 4,
   "value": "eedb05d189eabc928d16f5b5c758479894ad8921064efd26361eb11b3211f1ad",
-  "parts": [
+  "events": [
     {
       "name": "EV_EFI_ACTION",
-      "hash": "3d6772b4f84ed47595d72a2c4c5ffd15f5bb72c7507fe26f2aaee2c69d5633ba"
+      "pcr": 4,
+      "hash": "3d6772b4f84ed47595d72a2c4c5ffd15f5bb72c7507fe26f2aaee2c69d5633ba",
+      "id": "Pcr4EfiCall"
     },
     {
       "name": "EV_SEPARATOR",
-      "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      "pcr": 4,
+      "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+      "id": "Pcr4Separator"
     },
     {
       "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
-      "hash": "94896c17d49fc8c8df0cc2836611586edab1615ce7cb58cf13fc5798de56b367"
+      "pcr": 4,
+      "hash": "94896c17d49fc8c8df0cc2836611586edab1615ce7cb58cf13fc5798de56b367",
+      "id": "Pcr4Shim"
     },
     {
       "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
-      "hash": "bc6844fc7b59b4f0c7da70a307fc578465411d7a2c34b0f4dc2cc154c873b644"
+      "pcr": 4,
+      "hash": "bc6844fc7b59b4f0c7da70a307fc578465411d7a2c34b0f4dc2cc154c873b644",
+      "id": "Pcr4Grub"
     },
     {
       "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
-      "hash": "6115ef506eecf507d43279d2b5f11573c4011fab0f5bba6e22bb72dbf1d1ffd9"
+      "pcr": 4,
+      "hash": "6115ef506eecf507d43279d2b5f11573c4011fab0f5bba6e22bb72dbf1d1ffd9",
+      "id": "Pcr4Vmlinuz"
     }
   ]
 }
