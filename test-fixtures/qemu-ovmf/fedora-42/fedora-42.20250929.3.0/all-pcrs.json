@@ -3,86 +3,120 @@
     {
       "id": 4,
       "value": "eedb05d189eabc928d16f5b5c758479894ad8921064efd26361eb11b3211f1ad",
-      "parts": [
+      "events": [
         {
           "name": "EV_EFI_ACTION",
-          "hash": "3d6772b4f84ed47595d72a2c4c5ffd15f5bb72c7507fe26f2aaee2c69d5633ba"
+          "pcr": 4,
+          "hash": "3d6772b4f84ed47595d72a2c4c5ffd15f5bb72c7507fe26f2aaee2c69d5633ba",
+          "id": "Pcr4EfiCall"
         },
         {
           "name": "EV_SEPARATOR",
-          "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+          "pcr": 4,
+          "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "id": "Pcr4Separator"
         },
         {
           "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
-          "hash": "94896c17d49fc8c8df0cc2836611586edab1615ce7cb58cf13fc5798de56b367"
+          "pcr": 4,
+          "hash": "94896c17d49fc8c8df0cc2836611586edab1615ce7cb58cf13fc5798de56b367",
+          "id": "Pcr4Shim"
         },
         {
           "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
-          "hash": "bc6844fc7b59b4f0c7da70a307fc578465411d7a2c34b0f4dc2cc154c873b644"
+          "pcr": 4,
+          "hash": "bc6844fc7b59b4f0c7da70a307fc578465411d7a2c34b0f4dc2cc154c873b644",
+          "id": "Pcr4Grub"
         },
         {
           "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
-          "hash": "6115ef506eecf507d43279d2b5f11573c4011fab0f5bba6e22bb72dbf1d1ffd9"
+          "pcr": 4,
+          "hash": "6115ef506eecf507d43279d2b5f11573c4011fab0f5bba6e22bb72dbf1d1ffd9",
+          "id": "Pcr4Vmlinuz"
         }
       ]
     },
     {
       "id": 7,
       "value": "b3a56a06c03a65277d0a787fcabc1e293eaa5d6dd79398f2dda741f7b874c65d",
-      "parts": [
+      "events": [
         {
           "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
-          "hash": "ccfc4bb32888a345bc8aeadaba552b627d99348c767681ab3141f5b01e40a40e"
+          "pcr": 7,
+          "hash": "ccfc4bb32888a345bc8aeadaba552b627d99348c767681ab3141f5b01e40a40e",
+          "id": "Pcr7SecureBoot"
         },
         {
           "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
-          "hash": "adb6fc232943e39c374bf4782b6c697f43c39fca1f4b51dfceda21164e19a893"
+          "pcr": 7,
+          "hash": "adb6fc232943e39c374bf4782b6c697f43c39fca1f4b51dfceda21164e19a893",
+          "id": "Pcr7Pk"
         },
         {
           "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
-          "hash": "b5432fe20c624811cb0296391bfdf948ebd02f0705ab8229bea09774023f0ebf"
+          "pcr": 7,
+          "hash": "b5432fe20c624811cb0296391bfdf948ebd02f0705ab8229bea09774023f0ebf",
+          "id": "Pcr7Kek"
         },
         {
           "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
-          "hash": "4313e43de720194a0eabf4d6415d42b5a03a34fdc47bb1fc924cc4e665e6893d"
+          "pcr": 7,
+          "hash": "4313e43de720194a0eabf4d6415d42b5a03a34fdc47bb1fc924cc4e665e6893d",
+          "id": "Pcr7Db"
         },
         {
           "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
-          "hash": "001004ba58a184f09be6c1f4ec75a246cc2eefa9637b48ee428b6aa9bce48c55"
+          "pcr": 7,
+          "hash": "001004ba58a184f09be6c1f4ec75a246cc2eefa9637b48ee428b6aa9bce48c55",
+          "id": "Pcr7Dbx"
         },
         {
           "name": "EV_SEPARATOR",
-          "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+          "pcr": 7,
+          "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "id": "Pcr7Separator"
         },
         {
           "name": "EV_EFI_VARIABLE_AUTHORITY",
-          "hash": "4d4a8e2c74133bbdc01a16eaf2dbb5d575afeb36f5d8dfcf609ae043909e2ee9"
+          "pcr": 7,
+          "hash": "4d4a8e2c74133bbdc01a16eaf2dbb5d575afeb36f5d8dfcf609ae043909e2ee9",
+          "id": "Pcr7ShimCert"
         },
         {
           "name": "EV_EFI_VARIABLE_AUTHORITY",
-          "hash": "e8e9578f5951ef16b1c1aa18ef02944b8375ec45ed4b5d8cdb30428db4a31016"
+          "pcr": 7,
+          "hash": "e8e9578f5951ef16b1c1aa18ef02944b8375ec45ed4b5d8cdb30428db4a31016",
+          "id": "Pcr7SbatLevel"
         },
         {
           "name": "EV_EFI_VARIABLE_AUTHORITY",
-          "hash": "ad5901fd581e6640c742c488083b9ac2c48255bd28a16c106c6f9df52702ee3f"
+          "pcr": 7,
+          "hash": "ad5901fd581e6640c742c488083b9ac2c48255bd28a16c106c6f9df52702ee3f",
+          "id": "Pcr7GrubMokListCert"
         }
       ]
     },
     {
       "id": 14,
       "value": "17cdefd9548f4383b67a37a901673bf3c8ded6f619d36c8007562de1d93c81cc",
-      "parts": [
+      "events": [
         {
           "name": "EV_IPL",
-          "hash": "e8e48e3ad10bc243341b4663c0057aef0ec7894ccc9ecb0598f0830fa57f7220"
+          "pcr": 14,
+          "hash": "e8e48e3ad10bc243341b4663c0057aef0ec7894ccc9ecb0598f0830fa57f7220",
+          "id": "Pcr14MokList"
         },
         {
           "name": "EV_IPL",
-          "hash": "8d8a3aae50d5d25838c95c034aadce7b548c9a952eb7925e366eda537c59c3b0"
+          "pcr": 14,
+          "hash": "8d8a3aae50d5d25838c95c034aadce7b548c9a952eb7925e366eda537c59c3b0",
+          "id": "Pcr14MokListX"
         },
         {
           "name": "EV_IPL",
-          "hash": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+          "pcr": 14,
+          "hash": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a",
+          "id": "Pcr14MokListTrusted"
         }
       ]
     }
