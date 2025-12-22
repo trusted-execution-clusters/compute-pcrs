@@ -1288,3 +1288,28 @@ fn test_image_combinations() {
         HashSet::<_>::from_iter(expected.iter().flat_map(|e| e.clone())),
     );
 }
+
+#[test]
+fn test_combine_one_image() {
+    let images = vec![vec![
+        TPMEvent {
+            name: "pcr4".into(),
+            pcr: 4,
+            hash: decode("f6f919856f814f30c2043b567c9434b73b658f2360175f18e49da81112216be0")
+                .unwrap(),
+            id: TPMEventID::Pcr4EfiCall,
+        },
+        TPMEvent {
+            name: "pcr7".into(),
+            pcr: 7,
+            hash: decode("1111111111111111111111111111111111111111111111111111111111111111")
+                .unwrap(),
+            id: TPMEventID::Pcr7SecureBoot,
+        },
+    ]];
+
+    let res = combine_images(&images);
+
+    let image_pcrs: Vec<Vec<Pcr>> = images.iter().map(|e| compile_pcrs(e)).collect();
+    assert_eq!(image_pcrs, res);
+}

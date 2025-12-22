@@ -80,6 +80,10 @@ pub struct EventCombinationError {}
 pub type EventNode = tree::ResultNode<TPMEvent, EventCombinationError>;
 
 pub fn combine_images(images: &[Vec<TPMEvent>]) -> Vec<Vec<Pcr>> {
+    if images.len() == 1 {
+        return vec![compile_pcrs(&images[0])];
+    }
+
     images
         .iter()
         .combinations(2)
