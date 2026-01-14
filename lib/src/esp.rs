@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 use crate::pefile;
+use glob::glob;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -14,35 +15,32 @@ pub struct Esp {
     grub: PathBuf,
 }
 
-const ESP_VENDOR_NAMES: [&str; 2] = ["redhat", "fedora"];
+fn find_efi_bin(search_path: &Path, bin_name: &str) -> io::Result<PathBuf> {
+    let glob_path = search_path.join(Path::new("**/EFI/*/").join(bin_name));
+    let glob_pattern = glob_path.to_str().ok_or_else(|| {
+        io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "Invalid efi bin search pattern",
+        )
+    })?;
 
-fn esp_vendor_path(esp_root_path: &Path) -> io::Result<PathBuf> {
-    for vendor in ESP_VENDOR_NAMES {
-        let vendor_path = esp_root_path.join(format!("EFI/{vendor}"));
-        match fs::metadata(&vendor_path) {
-            Err(_) => {}
-            Ok(metadata) => {
-                if metadata.is_dir() {
-                    return Ok(vendor_path);
-                }
-            }
+    let search_results = match glob(glob_pattern) {
+        Ok(results) => results,
+        Err(_) => {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "Invalid efi bin search pattern",
+            ));
         }
+    };
+    if let Some(path) = search_results.filter_map(Result::ok).next() {
+        // Assume there's just one of them; return the first one
+        return Ok(path);
     }
+
     Err(io::Error::new(
         io::ErrorKind::NotFound,
-        String::from("Unknown ESP tree format"),
-    ))
-}
-
-fn bin_path_from_esp_vendor(esp_vendor_path: &Path, bin_name: &str) -> io::Result<PathBuf> {
-    let bin_path = esp_vendor_path.join(bin_name);
-    let metadata = fs::metadata(&bin_path)?;
-    if metadata.is_file() {
-        return Ok(bin_path);
-    }
-    Err(io::Error::new(
-        io::ErrorKind::IsADirectory,
-        bin_path.to_string_lossy(),
+        format!("{bin_name} not found"),
     ))
 }
 
@@ -53,11 +51,9 @@ impl Esp {
             return Err(io::Error::new(io::ErrorKind::NotADirectory, path));
         }
 
-        let esp_vendor_path = esp_vendor_path(&path_pb)?;
-
         Ok(Esp {
-            grub: bin_path_from_esp_vendor(&esp_vendor_path, "grubx64.efi")?,
-            shim: bin_path_from_esp_vendor(&esp_vendor_path, "shimx64.efi")?,
+            grub: find_efi_bin(&path_pb, "grubx64.efi")?,
+            shim: find_efi_bin(&path_pb, "shimx64.efi")?,
         })
     }
 
