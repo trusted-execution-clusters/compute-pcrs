@@ -1313,3 +1313,16 @@ fn test_combine_one_image() {
     let image_pcrs: Vec<Vec<Pcr>> = images.iter().map(|e| compile_pcrs(e)).collect();
     assert_eq!(image_pcrs, res);
 }
+
+#[test]
+fn test_pcr14_mok_list_trusted() {
+    let event = TPMEvent {
+        pcr: 14,
+        name: "EV_IPL".to_string(),
+        hash: hex::decode("4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a")
+            .unwrap(),
+        id: TPMEventID::Pcr14MokListTrusted,
+    };
+    let res = combine_images(&[vec![event.clone()], vec![event.clone()]]);
+    assert_eq!(res, vec![compile_pcrs(&[event])]);
+}

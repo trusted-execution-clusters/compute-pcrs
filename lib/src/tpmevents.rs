@@ -55,6 +55,7 @@ pub enum TPMEventID {
     Pcr14MokList,
     Pcr14MokListX,
     Pcr14MokListTrusted,
+    PcrLastNodeEvent, // Don't use it except for TPM Event combination
 }
 
 impl TPMEventID {
@@ -93,6 +94,7 @@ impl TPMEventID {
             TPMEventID::Pcr14MokList => TPMEG_MOKVARS,
             TPMEventID::Pcr14MokListX => TPMEG_MOKVARS,
             TPMEventID::Pcr14MokListTrusted => TPMEG_MOKVARS,
+            TPMEventID::PcrLastNodeEvent => TPMEG_NEVER,
         }
     }
 
