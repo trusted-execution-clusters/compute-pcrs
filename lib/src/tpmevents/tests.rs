@@ -12,6 +12,12 @@ fn test_tpmevevent_next_first() {
 #[test]
 fn test_tpmevevent_next_last() {
     let event = TPMEventID::Pcr14MokListTrusted;
+    assert_eq!(event.next(), Some(TPMEventID::PcrLastNodeEvent));
+}
+
+#[test]
+fn test_tpmevevent_lastly_last() {
+    let event = TPMEventID::PcrLastNodeEvent;
     assert_eq!(event.next(), None);
 }
 
