@@ -5,7 +5,7 @@
 
 image := "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/42.20250929.3.0/x86_64/fedora-coreos-42.20250929.3.0-ostree.x86_64.ociarchive"
 target_container_ociarchive_path := absolute_path(join("/tmp", file_name(image)))
-target_container_name := without_extension(file_name(image))
+target_container_name := replace_regex(without_extension(file_name(image)), "@sha256:", "-")
 target_container_osinfo_path := "/tmp/compute-pcrs-osinfo"
 target_container_mount_point := "/var/srv/image"
 host_platform := "qemu-ovmf/fedora-42"
@@ -14,12 +14,17 @@ skip_build := "false"
 
 pull-target-container-image:
     #!/bin/bash
+    # set -x
     set -euo pipefail
     if ! podman image exists {{target_container_name}}; then
-        curl --skip-existing -o {{target_container_ociarchive_path}} {{image}}
-        image_id=$(podman load -i {{target_container_ociarchive_path}} 2>/dev/null | awk -F ':' '{print $NF}')
-        rm {{target_container_ociarchive_path}}
-        podman tag $image_id {{target_container_name}}
+        if podman pull {{image}}; then
+            podman tag {{image}} {{target_container_name}}
+        else
+            curl --skip-existing -o {{target_container_ociarchive_path}} {{image}}
+            image_id=$(podman load -i {{target_container_ociarchive_path}} 2>/dev/null | awk -F ':' '{print $NF}')
+            rm {{target_container_ociarchive_path}}
+            podman tag $image_id {{target_container_name}}
+        fi
     fi
 
 extract-info-target-container-image: pull-target-container-image
