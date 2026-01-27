@@ -1089,9 +1089,9 @@ checksum = "d8cfeafaffdbc32176b64fb251369d52ea9f0a8fbc6f8759edffef7b525d64bb"
 
 [[package]]
 name = "lief"
-version = "0.17.2"
+version = "0.17.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "763b6760e243b6b2083e3abb6f84916050114a944c88d5e649356c81f2699804"
+checksum = "6446b5d7b31c03d9c99321515294004f1b27bbbd5265a6533321e1c4dfef2e75"
 dependencies = [
  "bitflags 2.9.1",
  "cxx",
@@ -1104,9 +1104,9 @@ dependencies = [
 
 [[package]]
 name = "lief-build"
-version = "0.17.2"
+version = "0.17.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "282503de62c5a17299c7406f90716ce7fc7977b4c5c60a33e60f762432510851"
+checksum = "73e010d2fc798ca2b420e0c483163b77571e13843a96cc61933b30ef4db2cdb6"
 dependencies = [
  "git-version",
  "miette",
@@ -1117,9 +1117,9 @@ dependencies = [
 
 [[package]]
 name = "lief-ffi"
-version = "0.17.2"
+version = "0.17.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d85732d1f35911b3d4c88ea8a2a8bfd82dd0fa9bd79679e01aa6f020e85aa899"
+checksum = "4af183cc1edf58fdfffce46f28685b43efa57736b218e9d341a6e9c68df61ac9"
 dependencies = [
  "autocxx",
  "cxx",
@@ -2128,9 +2128,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "uuid"
-version = "1.19.0"
+version = "1.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2e054861b4bd027cd373e18e8d8d8e6548085000e41290d95ce0c373a654b4a"
+checksum = "ee48d38b119b0cd71fe4141b30f5ba9c7c5d9f4e7a3a8b4a674e4b6ef789976f"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
