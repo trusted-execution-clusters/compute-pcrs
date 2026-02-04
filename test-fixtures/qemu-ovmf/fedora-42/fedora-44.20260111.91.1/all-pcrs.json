@@ -1,0 +1,124 @@
+{
+  "pcrs": [
+    {
+      "id": 4,
+      "value": "55cafe514d82bb527d34b678c4d2954d1aab07b6483367b67cc90f121d6f67d4",
+      "events": [
+        {
+          "name": "EV_EFI_ACTION",
+          "pcr": 4,
+          "hash": "3d6772b4f84ed47595d72a2c4c5ffd15f5bb72c7507fe26f2aaee2c69d5633ba",
+          "id": "Pcr4EfiCall"
+        },
+        {
+          "name": "EV_SEPARATOR",
+          "pcr": 4,
+          "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "id": "Pcr4Separator"
+        },
+        {
+          "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
+          "pcr": 4,
+          "hash": "9d5c8223265f3119cbc44155abbb58717e998338f41a4edeacb4b0b94357821f",
+          "id": "Pcr4Shim"
+        },
+        {
+          "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
+          "pcr": 4,
+          "hash": "72c5ea9371a1262e5275d2ed7e97fb6ae420f7e8e5eb5f18a1232c088cd74680",
+          "id": "Pcr4Grub"
+        },
+        {
+          "name": "EV_EFI_BOOT_SERVICES_APPLICATION",
+          "pcr": 4,
+          "hash": "c5da3452bfe17cce87e00390f70afb55303f4f4411af853cf5289b95fce81c14",
+          "id": "Pcr4Vmlinuz"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "value": "8e8d561f8e596446b86c0cdbf22d9ff54a0b2913dd44054e23c493c93aa79ce7",
+      "events": [
+        {
+          "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
+          "pcr": 7,
+          "hash": "ccfc4bb32888a345bc8aeadaba552b627d99348c767681ab3141f5b01e40a40e",
+          "id": "Pcr7SecureBoot"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
+          "pcr": 7,
+          "hash": "adb6fc232943e39c374bf4782b6c697f43c39fca1f4b51dfceda21164e19a893",
+          "id": "Pcr7Pk"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
+          "pcr": 7,
+          "hash": "b5432fe20c624811cb0296391bfdf948ebd02f0705ab8229bea09774023f0ebf",
+          "id": "Pcr7Kek"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
+          "pcr": 7,
+          "hash": "4313e43de720194a0eabf4d6415d42b5a03a34fdc47bb1fc924cc4e665e6893d",
+          "id": "Pcr7Db"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_DRIVER_CONFIG",
+          "pcr": 7,
+          "hash": "001004ba58a184f09be6c1f4ec75a246cc2eefa9637b48ee428b6aa9bce48c55",
+          "id": "Pcr7Dbx"
+        },
+        {
+          "name": "EV_SEPARATOR",
+          "pcr": 7,
+          "hash": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119",
+          "id": "Pcr7Separator"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_AUTHORITY",
+          "pcr": 7,
+          "hash": "4d4a8e2c74133bbdc01a16eaf2dbb5d575afeb36f5d8dfcf609ae043909e2ee9",
+          "id": "Pcr7ShimCert"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_AUTHORITY",
+          "pcr": 7,
+          "hash": "bcf4d1ff6bf02f949e5afd49dc45fe3e16f39b302764bf2ee98257e8297a1f7d",
+          "id": "Pcr7SbatLevel"
+        },
+        {
+          "name": "EV_EFI_VARIABLE_AUTHORITY",
+          "pcr": 7,
+          "hash": "ad5901fd581e6640c742c488083b9ac2c48255bd28a16c106c6f9df52702ee3f",
+          "id": "Pcr7GrubMokListCert"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "value": "17cdefd9548f4383b67a37a901673bf3c8ded6f619d36c8007562de1d93c81cc",
+      "events": [
+        {
+          "name": "EV_IPL",
+          "pcr": 14,
+          "hash": "e8e48e3ad10bc243341b4663c0057aef0ec7894ccc9ecb0598f0830fa57f7220",
+          "id": "Pcr14MokList"
+        },
+        {
+          "name": "EV_IPL",
+          "pcr": 14,
+          "hash": "8d8a3aae50d5d25838c95c034aadce7b548c9a952eb7925e366eda537c59c3b0",
+          "id": "Pcr14MokListX"
+        },
+        {
+          "name": "EV_IPL",
+          "pcr": 14,
+          "hash": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a",
+          "id": "Pcr14MokListTrusted"
+        }
+      ]
+    }
+  ]
+}

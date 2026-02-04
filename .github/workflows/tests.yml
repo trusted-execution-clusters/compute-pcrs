@@ -32,6 +32,7 @@ jobs:
         target-image-url:
           - "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/42.20250929.3.0/x86_64/fedora-coreos-42.20250929.3.0-ostree.x86_64.ociarchive"
           - "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.19/4.19.0/rhcos-4.19.0-x86_64-ostree.x86_64.ociarchive"
+          - "quay.io/trusted-execution-clusters/fedora-coreos@sha256:0eafb8b60f0329a743d42e7d4d286eb4b36fd096489fdda74d011d861e6692e6"
         test-finder:
           - grep -E "^ *test-.*$" | grep -v uki
         host-platform:
