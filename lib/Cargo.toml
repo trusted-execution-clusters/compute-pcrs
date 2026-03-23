@@ -13,16 +13,16 @@ repository = "https://github.com/trusted-execution-clusters/compute-pcrs"
 rust-version = "1.88.0"
 
 [dependencies]
-lief = "0.17.4"
+lief = "0.17.6"
 anyhow = "1.0.102"
 hex = "0.4.3"
 hex-literal = "1.1.0"
 sha2 = "0.10.9"
 serde = { version = "1.0.228", features = ["derive"] }
-uuid = "1.21.0"
-openssl = "0.10.75"
+uuid = "1.22.0"
+openssl = "0.10.76"
 glob = "0.3.3"
-serde_with = { version = "3.16.1", features = ["hex"] }
+serde_with = { version = "3.18.0", features = ["hex"] }
 strum = { version = "0.28.0", features = ["derive"] }
 itertools = "0.14.0"
 log = "0.4.28"
