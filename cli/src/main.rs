@@ -106,6 +106,11 @@ enum Command {
         )]
         no_secureboot: bool,
     },
+    /// Compute PCR 8
+    Pcr8 {
+        #[arg(default_value_t = 5, long, help = "The timeout for boot menu")]
+        timeout: u8,
+    },
     /// Compute PCR 11
     Pcr11 {
         /// Path to a UKI
@@ -188,6 +193,11 @@ fn main() -> Result<()> {
                 rfs.esp(),
                 !no_secureboot,
             );
+            println!("{}", serde_json::to_string_pretty(&pcr).unwrap());
+            Ok(())
+        }
+        Command::Pcr8 { timeout } => {
+            let pcr = compute_pcr8(*timeout);
             println!("{}", serde_json::to_string_pretty(&pcr).unwrap());
             Ok(())
         }
