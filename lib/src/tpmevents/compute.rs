@@ -48,10 +48,11 @@ const MODELS_MOKVARS: [TPMEventID; 3] = [
     TPMEventID::Pcr14MokListTrusted,
 ];
 
-pub fn pcr4_nouki_events(
+pub fn pcr4_events(
     kernels_dir: &str,
     esp_path: &str,
-    uki: bool,
+    uki_path: Option<&String>,
+    uki_addons: &[String],
     secureboot: bool,
 ) -> Vec<TPMEvent> {
     let mut events: Vec<TPMEvent> = vec![];
@@ -89,7 +90,34 @@ pub fn pcr4_nouki_events(
         id: TPMEventID::Pcr4Grub,
     });
 
-    if secureboot && !uki {
+    if let Some(uki) = uki_path {
+        let uki_data = fs::read(uki).unwrap();
+        events.push(TPMEvent {
+            name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+            pcr: n_pcr,
+            hash: pefile::PeFile::new(&uki_data).unwrap().authenticode(),
+            id: TPMEventID::Pcr4Uki,
+        });
+        events.extend(uki_addons.iter().map(|addon| {
+            let uki_addon_data = fs::read(addon).unwrap();
+            TPMEvent {
+                name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+                pcr: n_pcr,
+                hash: pefile::PeFile::new(&uki_addon_data).unwrap().authenticode(),
+                id: TPMEventID::Pcr4UkiAddon,
+            }
+        }));
+
+        if !secureboot {
+            let vmlinuz_data = linux::load_vmlinuz(kernels_dir.as_ref()).unwrap();
+            events.push(TPMEvent {
+                name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+                pcr: n_pcr,
+                hash: pefile::PeFile::new(&vmlinuz_data).unwrap().authenticode(),
+                id: TPMEventID::Pcr4Vmlinuz,
+            });
+        }
+    } else if secureboot {
         events.push(TPMEvent {
             name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
             pcr: n_pcr,
@@ -98,65 +126,7 @@ pub fn pcr4_nouki_events(
         });
     }
 
-    // TODO: write condition for uki and implement logic
     events
-}
-
-pub fn pcr4_uki_events(
-    esp_path: &str,
-    uki: &str,
-    uki_addons: &Vec<String>,
-    secureboot: bool,
-) -> Vec<TPMEvent> {
-    let esp = esp::Esp::new(esp_path).unwrap();
-    let mut uki_and_addons: Vec<&str> = vec![uki];
-
-    let ev_efi_action_hash: Vec<u8> =
-        Sha256::digest(b"Calling EFI Application from Boot Option").to_vec();
-    let ev_separator_hash: Vec<u8> = Sha256::digest(hex::decode("00000000").unwrap()).to_vec();
-
-    let mut hashes: Vec<(String, Vec<u8>)> = vec![];
-    hashes.push(("EV_EFI_ACTION".into(), ev_efi_action_hash));
-    hashes.push(("EV_SEPARATOR".into(), ev_separator_hash));
-
-    let mut bins: Vec<pefile::PeFile> = vec![esp.shim(), esp.grub()];
-    for addon in uki_and_addons {
-        let data = fs::read(uki).unwrap();
-        bins.push(pefile::PeFile::new(&data).unwrap());
-    }
-
-    // println!("{bins:?}");
-
-    let mut bin_hashes: Vec<(String, Vec<u8>)> = bins
-        .iter()
-        .map(|b| ("EV_EFI_BOOT_SERVICES_APPLICATION".into(), b.authenticode()))
-        .collect();
-    hashes.append(&mut bin_hashes);
-
-    // Start with 0
-    let mut result =
-        hex::decode("0000000000000000000000000000000000000000000000000000000000000000")
-            .unwrap()
-            .to_vec();
-
-    for (_p, h) in &hashes {
-        let mut hasher = Sha256::new();
-        hasher.update(result);
-        hasher.update(h);
-        result = hasher.finalize().to_vec();
-    }
-
-    Pcr {
-        id: 4,
-        value: hex::encode(result),
-        events: hashes
-            .iter()
-            .map(|(p, h)| Part {
-                name: p.to_string(),
-                hash: hex::encode(h),
-            })
-            .collect(),
-    }
 }
 
 pub fn pcr7_events(efivars_path: &str, esp_path: &str, secureboot_enabled: bool) -> Vec<TPMEvent> {
