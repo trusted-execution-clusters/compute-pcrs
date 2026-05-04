@@ -51,7 +51,7 @@ enum Command {
             long,
             short,
             default_value = "",
-            help = "Path to the UKI binary. It will try to find it in ${rootfs}/boot/EFI/Linux/*.efi by default."
+            help = "Path to the UKI binary relative to the target container image's rootfs. It will try to find it in ${rootfs}/boot/EFI/Linux/*.efi by default."
         )]
         uki: String,
         #[arg(
@@ -173,6 +173,7 @@ fn main() -> Result<()> {
                 compute_pcr4(
                     rfs.vmlinuz(),
                     rfs.esp(),
+                    rfs.systemd_boot(),
                     rfs.uki(),
                     rfs.uki_addons(),
                     !no_secureboot,
@@ -202,6 +203,7 @@ fn main() -> Result<()> {
             let pcr = compute_pcr4(
                 rfs.vmlinuz(),
                 rfs.esp(),
+                rfs.systemd_boot(),
                 rfs.uki(),
                 rfs.uki_addons(),
                 !no_secureboot,

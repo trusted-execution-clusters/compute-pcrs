@@ -20,6 +20,7 @@ pub mod uefi;
 pub fn compute_pcr4(
     kernels_dir: &str,
     esp_path: &str,
+    systemd_boot: Option<&String>,
     uki: Option<&String>,
     uki_addons: &[String],
     secureboot: bool,
@@ -27,6 +28,7 @@ pub fn compute_pcr4(
     Pcr::compile_from(&tpmevents::compute::pcr4_events(
         kernels_dir,
         esp_path,
+        systemd_boot,
         uki,
         uki_addons,
         secureboot,
