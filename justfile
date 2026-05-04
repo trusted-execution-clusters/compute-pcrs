@@ -194,3 +194,25 @@ test-default-mok-keys: prepare-test-deps
             > test/result.json 2>/dev/null
     diff test-fixtures/{{host_platform}}/${ID}-${OSTREE_VERSION}/pcr14.json test/result.json || (echo "FAILED" && exit 1)
     echo "OK"
+
+test-ukidev: build-container
+    #!/bin/bash
+    set -euo pipefail
+    # set -x
+    podman run --rm \
+        --security-opt label=disable \
+        -v $PWD/test-data/:/var/srv/test-data \
+        --mount=type=image,source=localhost/fcos-trustee-uki,destination={{target_container_mount_point}},rw=false \
+        {{container_image_name}} \
+        compute-pcrs pcr4 \
+            --rootfs {{target_container_mount_point}} \
+            --uki boot/EFI/Linux/6.19.12-200.fc43.x86_64.efi \
+            --uki-addon boot/EFI/Linux/6.19.12-200.fc43.x86_64.efi.extra.d/ignition.addon.efi \
+            --secureboot-disabled
+    podman run --rm \
+        --security-opt label=disable \
+        -v $PWD/test-data/:/var/srv/test-data \
+        --mount=type=image,source=localhost/fcos-trustee-uki,destination={{target_container_mount_point}},rw=false \
+        {{container_image_name}} \
+        compute-pcrs pcr11 \
+            {{target_container_mount_point}}/boot/EFI/Linux/6.19.12-200.fc43.x86_64.efi
