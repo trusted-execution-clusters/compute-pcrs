@@ -28,6 +28,7 @@ pub enum TPMEventID {
     Pcr4Separator,
     Pcr4Shim,
     Pcr4Grub,
+    Pcr4SystemdBoot,
     Pcr4Uki,
     Pcr4UkiAddon,
     Pcr4Vmlinuz,
@@ -68,6 +69,8 @@ impl TPMEventID {
             TPMEventID::Pcr4Separator => TPMEG_NEVER,
             TPMEventID::Pcr4Shim => TPMEG_BOOTLOADER,
             TPMEventID::Pcr4Grub => TPMEG_BOOTLOADER,
+            //TODO: should we create another TPMEG_ for systemdboot?
+            TPMEventID::Pcr4SystemdBoot => TPMEG_BOOTLOADER,
             TPMEventID::Pcr4Uki => TPMEG_UKI,
             TPMEventID::Pcr4UkiAddon => TPMEG_UKI,
             TPMEventID::Pcr4Vmlinuz => TPMEG_LINUX,
