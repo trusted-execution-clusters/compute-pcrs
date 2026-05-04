@@ -15,12 +15,19 @@ const RELATIVE_ESP_OLD: &str = "usr/lib/bootupd/updates/";
 // see https://fedoraproject.org/wiki/Changes/BootLoaderUpdatesPhase1
 const RELATIVE_ESP_NEW: &str = "usr/lib/efi";
 const RELATIVE_UKI_DISCOVERY_PATTERN: &str = "boot/EFI/Linux/*.efi";
+const RELATIVE_SYSTEMDBOOT_PATH_X86: &str = "usr/lib/systemd/boot/efi/systemd-bootx64.efi";
+const RELATIVE_SYSTEMDBOOT_PATH_AARCH64: &str = "usr/lib/systemd/boot/efi/systemd-bootx64.efi";
+const RELATIVE_SYSTEMDBOOT_PATHS: [&str; 2] = [
+    RELATIVE_SYSTEMDBOOT_PATH_X86,
+    RELATIVE_SYSTEMDBOOT_PATH_AARCH64,
+];
 
 pub struct RootFSTree {
     esp_path: String,
     kernels_path: String,
     uki_path: Option<String>,
     uki_addons: Vec<String>,
+    systemd_boot: Option<String>,
 }
 
 fn esp_path_absolute(rootfs_path: &path::Path) -> io::Result<path::PathBuf> {
@@ -87,6 +94,18 @@ fn uki_addons_absolute(
     Ok(absolute_addon_paths)
 }
 
+fn systemdboot_path_absolute(rootfs_path: &path::Path) -> io::Result<Option<String>> {
+    for temptative in RELATIVE_SYSTEMDBOOT_PATHS
+        .iter()
+        .map(|p| rootfs_path.join(p))
+    {
+        if fs::exists(&temptative)? {
+            return Ok(Some(temptative.to_str().unwrap().into()));
+        }
+    }
+    Ok(None)
+}
+
 impl RootFSTree {
     pub fn new(rootfs_path: &str, uki: &str, uki_addons: Vec<String>) -> io::Result<RootFSTree> {
         let rootfs_path = path::absolute(rootfs_path)?;
@@ -106,6 +125,7 @@ impl RootFSTree {
             kernels_path: kernels_path.to_str().unwrap().into(),
             uki_path,
             uki_addons: uki_addons_paths,
+            systemd_boot: systemdboot_path_absolute(&rootfs_path)?,
         })
     }
 
@@ -123,5 +143,9 @@ impl RootFSTree {
 
     pub fn uki_addons(&self) -> &Vec<String> {
         self.uki_addons.as_ref()
+    }
+
+    pub fn systemd_boot(&self) -> Option<&String> {
+        self.systemd_boot.as_ref()
     }
 }
