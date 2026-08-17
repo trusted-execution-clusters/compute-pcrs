@@ -43,9 +43,9 @@ jobs:
             test-finder: grep -E "^ *test-.*$" | grep -v uki | grep -v test-secureboot-disabled
     steps:
       - name: "Check out repository"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: "Clone reference-values"
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: trusted-execution-clusters/reference-values
           path: test-data
