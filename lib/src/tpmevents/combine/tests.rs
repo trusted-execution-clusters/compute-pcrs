@@ -30,15 +30,21 @@ fn test_tpm_event_id_hashmap() {
         hash: vec![1, 2, 3, 4, 5],
         id: TPMEventID::Pcr11UnameContent,
     };
-    let events = vec![foo.clone(), bar.clone(), foobar.clone()];
+    let foobaz = TPMEvent {
+        name: "FOOBAR".into(),
+        pcr: 0xe8,
+        hash: vec![6, 7, 8, 9, 10],
+        id: TPMEventID::Pcr11UnameContent,
+    };
+    let events = vec![foo.clone(), bar.clone(), foobar.clone(), foobaz.clone()];
 
     let res = tpm_event_id_hashmap(&events);
     assert_eq!(
         res,
         HashMap::from([
-            (TPMEventID::PcrRootNodeEvent, foo),
-            (TPMEventID::Pcr11Sbat, bar),
-            (TPMEventID::Pcr11UnameContent, foobar),
+            (TPMEventID::PcrRootNodeEvent, vec![foo]),
+            (TPMEventID::Pcr11Sbat, vec![bar]),
+            (TPMEventID::Pcr11UnameContent, vec![foobar, foobaz]),
         ])
     );
 }
@@ -1680,5 +1686,60 @@ fn test_all_pcrs_2_images() {
                 "17cdefd9548f4383b67a37a901673bf3c8ded6f619d36c8007562de1d93c81cc"
             ],
         ]
+    );
+}
+
+#[test]
+fn test_combine_multiple_events_same_id() {
+    let this = vec![
+        TPMEvent {
+            pcr: 4,
+            name: "EV_EFI_ACTION".to_string(),
+            hash: hex::decode("0000000000000000000000000000000000000000000000000000000000000000")
+                .unwrap(),
+            id: TPMEventID::Pcr4EfiCall,
+        },
+        TPMEvent {
+            pcr: 4,
+            name: "EV_EFI_ACTION".to_string(),
+            hash: hex::decode("1111111111111111111111111111111111111111111111111111111111111111")
+                .unwrap(),
+            id: TPMEventID::Pcr4EfiCall,
+        },
+    ];
+    let that = vec![
+        TPMEvent {
+            pcr: 4,
+            name: "EV_EFI_ACTION".to_string(),
+            hash: hex::decode("2222222222222222222222222222222222222222222222222222222222222222")
+                .unwrap(),
+            id: TPMEventID::Pcr4EfiCall,
+        },
+        TPMEvent {
+            pcr: 4,
+            name: "EV_EFI_ACTION".to_string(),
+            hash: hex::decode("3333333333333333333333333333333333333333333333333333333333333333")
+                .unwrap(),
+            id: TPMEventID::Pcr4EfiCall,
+        },
+    ];
+    let foobar = vec![this, that];
+
+    let res = combine_images(&foobar);
+    let pcr_values: Vec<Vec<String>> = res
+        .iter()
+        .map(|i| {
+            i.iter()
+                .map(|p| hex::encode(p.value.clone()))
+                .collect::<Vec<_>>()
+        })
+        .collect();
+
+    assert_eq!(
+        pcr_values,
+        vec![
+            vec!["4cb4c04374037e0ddde15a714a4295501e2cbc3b0971e4c3eebce23ef433dc4d",],
+            vec!["22d0d408147e904fa9fe6feba5fc51374e44f07101e208e62fd5453841595ade",],
+        ],
     );
 }

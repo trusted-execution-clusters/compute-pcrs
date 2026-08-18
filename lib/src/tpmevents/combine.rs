@@ -77,7 +77,7 @@ mod tests;
 #[derive(Clone, Debug)]
 pub struct EventCombinationError {}
 
-pub type EventNode = tree::ResultNode<TPMEvent, EventCombinationError>;
+pub type EventNode = tree::ResultNode<Vec<TPMEvent>, EventCombinationError>;
 
 pub fn combine_images(images: &[Vec<TPMEvent>]) -> Vec<Vec<Pcr>> {
     if images.len() == 1 {
@@ -101,7 +101,7 @@ pub fn combine(this: &[TPMEvent], that: &[TPMEvent]) -> Vec<Vec<Pcr>> {
         Some(st) => st
             .iter()
             .flat_map(|t| t.valid_branches())
-            .map(|e| compile_pcrs(&e))
+            .map(|e| compile_pcrs(&e.into_iter().flatten().collect::<Vec<_>>()))
             .collect(),
         None => vec![],
     }
@@ -109,8 +109,8 @@ pub fn combine(this: &[TPMEvent], that: &[TPMEvent]) -> Vec<Vec<Pcr>> {
 
 fn event_subtree(
     event_id: &TPMEventID,
-    map_this: &HashMap<TPMEventID, TPMEvent>,
-    map_that: &HashMap<TPMEventID, TPMEvent>,
+    map_this: &HashMap<TPMEventID, Vec<TPMEvent>>,
+    map_that: &HashMap<TPMEventID, Vec<TPMEvent>>,
     group_this: u32,
     group_that: u32,
 ) -> Option<Vec<EventNode>> {
@@ -119,7 +119,7 @@ fn event_subtree(
     let opt_this = map_this.get(event_id);
     let opt_that = map_that.get(event_id);
     // Divergences contains tuples with events, and this/that masked groups
-    let mut divs: Vec<(&TPMEvent, u32, u32)> = vec![];
+    let mut divs: Vec<(&Vec<TPMEvent>, u32, u32)> = vec![];
     let mut nodes: Vec<EventNode> = vec![];
     let mut event_required = false;
     let event_groups = event_id.groups();
@@ -182,8 +182,8 @@ fn event_subtree(
         }
     }
 
-    for (event, g_this, g_that) in divs {
-        let mut node = EventNode::new_ok(event.clone());
+    for (events, g_this, g_that) in divs {
+        let mut node = EventNode::new_ok(events.clone());
         if let Some(children) = event_subtree(&event_id.next()?, map_this, map_that, g_this, g_that)
         {
             for c in children {
@@ -196,6 +196,14 @@ fn event_subtree(
     Some(nodes)
 }
 
-fn tpm_event_id_hashmap(events: &[TPMEvent]) -> HashMap<TPMEventID, TPMEvent> {
-    events.iter().map(|e| (e.id.clone(), e.clone())).collect()
+fn tpm_event_id_hashmap(events: &[TPMEvent]) -> HashMap<TPMEventID, Vec<TPMEvent>> {
+    let mut lookup = HashMap::<TPMEventID, Vec<TPMEvent>>::new();
+    for event in events {
+        lookup
+            .entry(event.id.clone())
+            .or_default()
+            .push(event.clone());
+    }
+
+    lookup
 }
