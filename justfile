@@ -38,6 +38,24 @@ extract-info-target-container-image: pull-target-container-image
         cat /etc/os-release \
     > {{target_container_osinfo_path}}
 
+run container *args:
+    #!/bin/bash
+    set -euo pipefail
+    cargo build --release
+    set -x
+    podman run --rm -ti \
+        --security-opt label=disable \
+        --mount=type=image,source={{container}},destination=/var/srv/image,rw=false \
+        -v $PWD/target/release/compute-pcrs:/usr/bin/compute-pcrs \
+        -v $PWD/test-data/:/var/srv/test-data \
+        -v $PWD/systemd-bootx64.efi:/var/srv/image/usr/lib/bootupd/updates/EFI/fedora/grubx64.efi \
+        fedora:latest \
+        compute-pcrs pcr4 \
+            --shim /var/srv/image/usr/lib/bootupd/updates/EFI/fedora/shimx64.efi \
+            --bootloader /var/srv/image/usr/lib/bootupd/updates/EFI/fedora/grubx64.efi \
+            --uki /var/srv/image/boot/EFI/Linux/6.15.10-200.fc42.x86_64.efi \
+            --uki-addon /var/srv/image/boot/EFI/Linux/6.15.10-200.fc42.x86_64.efi.extra.d/ignition.addon.efi
+
 build-container:
     #!/bin/bash
     set -euo pipefail
@@ -176,3 +194,25 @@ test-default-mok-keys: prepare-test-deps
             > test/result.json 2>/dev/null
     diff test-fixtures/{{host_platform}}/${ID}-${OSTREE_VERSION}/pcr14.json test/result.json || (echo "FAILED" && exit 1)
     echo "OK"
+
+test-ukidev: build-container
+    #!/bin/bash
+    set -euo pipefail
+    # set -x
+    podman run --rm \
+        --security-opt label=disable \
+        -v $PWD/test-data/:/var/srv/test-data \
+        --mount=type=image,source=localhost/fcos-trustee-uki,destination={{target_container_mount_point}},rw=false \
+        {{container_image_name}} \
+        compute-pcrs pcr4 \
+            --rootfs {{target_container_mount_point}} \
+            --uki boot/EFI/Linux/6.19.12-200.fc43.x86_64.efi \
+            --uki-addon boot/EFI/Linux/6.19.12-200.fc43.x86_64.efi.extra.d/ignition.addon.efi \
+            --secureboot-disabled
+    podman run --rm \
+        --security-opt label=disable \
+        -v $PWD/test-data/:/var/srv/test-data \
+        --mount=type=image,source=localhost/fcos-trustee-uki,destination={{target_container_mount_point}},rw=false \
+        {{container_image_name}} \
+        compute-pcrs pcr11 \
+            {{target_container_mount_point}}/boot/EFI/Linux/6.19.12-200.fc43.x86_64.efi

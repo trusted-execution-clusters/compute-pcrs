@@ -2,10 +2,6 @@
 // SPDX-FileCopyrightText: Beñat Gartzia Arruabarrena <bgartzia@redhat.com>
 //
 // SPDX-License-Identifier: MIT
-use sha2::{Digest, Sha256};
-use std::collections::HashSet;
-use std::fs;
-
 use crate::cert_db::Certdb;
 use crate::esp;
 use crate::linux;
@@ -16,6 +12,9 @@ use crate::tpmevents::TPMEvent;
 use crate::tpmevents::TPMEventID;
 use crate::uefi;
 use crate::uefi::efivars;
+use sha2::{Digest, Sha256};
+use std::collections::HashSet;
+use std::fs;
 
 const EV_SEPARATOR_HASH: [u8; 32] = [
     223, 63, 97, 152, 4, 169, 47, 219, 64, 87, 25, 45, 196, 61, 215, 72, 234, 119, 138, 220, 82,
@@ -52,12 +51,15 @@ const MODELS_MOKVARS: [TPMEventID; 3] = [
 pub fn pcr4_events(
     kernels_dir: &str,
     esp_path: &str,
-    uki: bool,
+    systemd_boot_path: Option<&String>,
+    uki_path: Option<&String>,
+    uki_addons: &[String],
     secureboot: bool,
 ) -> Vec<TPMEvent> {
     let mut events: Vec<TPMEvent> = vec![];
     let esp = esp::Esp::new(esp_path).unwrap();
     let n_pcr = 4;
+    let mut is_systemd_boot = false;
 
     // Calling EFI App
     events.push(TPMEvent {
@@ -75,22 +77,62 @@ pub fn pcr4_events(
         id: TPMEventID::Pcr4Separator,
     });
 
-    // Binaries
-    events.push(TPMEvent {
-        name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
-        pcr: n_pcr,
-        hash: esp.shim().authenticode(),
-        id: TPMEventID::Pcr4Shim,
-    });
+    if let Some(sysd_boot) = systemd_boot_path {
+        let sysd_boot_bytes = fs::read(sysd_boot).unwrap();
+        events.push(TPMEvent {
+            name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+            pcr: n_pcr,
+            hash: pefile::PeFile::new(&sysd_boot_bytes)
+                .unwrap()
+                .authenticode(),
+            id: TPMEventID::Pcr4SystemdBoot,
+        });
+        is_systemd_boot = true;
+    } else {
+        // Binaries
+        events.push(TPMEvent {
+            name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+            pcr: n_pcr,
+            hash: esp.shim().authenticode(),
+            id: TPMEventID::Pcr4Shim,
+        });
 
-    events.push(TPMEvent {
-        name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
-        pcr: n_pcr,
-        hash: esp.grub().authenticode(),
-        id: TPMEventID::Pcr4Grub,
-    });
+        events.push(TPMEvent {
+            name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+            pcr: n_pcr,
+            hash: esp.grub().authenticode(),
+            id: TPMEventID::Pcr4Grub,
+        });
+    }
 
-    if secureboot && !uki {
+    if let Some(uki) = uki_path {
+        let uki_data = fs::read(uki).unwrap();
+        events.push(TPMEvent {
+            name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+            pcr: n_pcr,
+            hash: pefile::PeFile::new(&uki_data).unwrap().authenticode(),
+            id: TPMEventID::Pcr4Uki,
+        });
+        events.extend(uki_addons.iter().map(|addon| {
+            let uki_addon_data = fs::read(addon).unwrap();
+            TPMEvent {
+                name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+                pcr: n_pcr,
+                hash: pefile::PeFile::new(&uki_addon_data).unwrap().authenticode(),
+                id: TPMEventID::Pcr4UkiAddon,
+            }
+        }));
+
+        if !secureboot && !is_systemd_boot {
+            let vmlinuz_data = linux::load_vmlinuz(kernels_dir.as_ref()).unwrap();
+            events.push(TPMEvent {
+                name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
+                pcr: n_pcr,
+                hash: pefile::PeFile::new(&vmlinuz_data).unwrap().authenticode(),
+                id: TPMEventID::Pcr4Vmlinuz,
+            });
+        }
+    } else if secureboot {
         events.push(TPMEvent {
             name: "EV_EFI_BOOT_SERVICES_APPLICATION".into(),
             pcr: n_pcr,
@@ -99,7 +141,6 @@ pub fn pcr4_events(
         });
     }
 
-    // TODO: write condition for uki and implement logic
     events
 }
 
