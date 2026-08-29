@@ -49,6 +49,8 @@ const MODELS_MOKVARS: [TPMEventID; 3] = [
     TPMEventID::Pcr14MokListTrusted,
 ];
 
+const MODELS_GRUB_CFG: [TPMEventID; 2] = [TPMEventID::Pcr8GrubTimeout, TPMEventID::Pcr8GrubBlscfg];
+
 pub fn pcr4_events(
     kernels_dir: &str,
     esp_path: &str,
@@ -280,4 +282,22 @@ pub fn pcr14_events(mok_variables: &str) -> Vec<TPMEvent> {
             id,
         })
         .collect()
+}
+
+pub fn pcr8_events(timeout: u8) -> Vec<TPMEvent> {
+    let n_pcr = 8;
+
+    let sections: Vec<String> = vec![format!("set timeout={timeout}"), "blscfg".into()];
+    let mut events: Vec<TPMEvent> = vec![];
+
+    sections.iter().zip(MODELS_GRUB_CFG).for_each(|(s, cid)| {
+        events.push(TPMEvent {
+            name: s.into(),
+            pcr: n_pcr,
+            hash: Sha256::digest(s).to_vec(),
+            id: cid,
+        });
+    });
+
+    events
 }

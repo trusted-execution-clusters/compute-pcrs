@@ -55,3 +55,7 @@ pub fn compute_pcr7(efivars_path: Option<&str>, esp_path: &str, secureboot_enabl
 pub fn compute_pcr14(mok_variables: &str) -> Pcr {
     Pcr::compile_from(&tpmevents::compute::pcr14_events(mok_variables))
 }
+
+pub fn compute_pcr8(timeout: u8) -> Pcr {
+    Pcr::compile_from(&tpmevents::compute::pcr8_events(timeout))
+}
